@@ -13,8 +13,13 @@ app.post("/signup", async (req, res) => {
     password: "siddhant123",
     age: 22,
   });
-  await user.save();
-  res.send("user created");
+
+  try {
+    await user.save();
+    res.send("user created");
+  } catch (err) {
+    res.status(400).send("error in creating user"+ err.message);
+  }
 });
 
 connectDB()
