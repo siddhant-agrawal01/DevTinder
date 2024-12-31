@@ -4,23 +4,38 @@ const app = express();
 const connectDB = require("./config/database");
 const UserModel = require("./models/user");
 
+// this is is middle ware for all my routes that convertes the body of request to json and it works for all the routes
+app.use(express.json());
+
 app.post("/signup", async (req, res) => {
   //creating  new instance of user model
-  const user = new UserModel({
-    firstName: "sid",
-    lastName: "agrawal",
-    email: "sid@gmail.com",
-    password: "siddhant123",
-    age: 22,
-  });
+  const user = new UserModel(req.body);
 
   try {
     await user.save();
     res.send("user created");
   } catch (err) {
-    res.status(400).send("error in creating user"+ err.message);
+    res.status(400).send("error in creating user" + err.message);
   }
 });
+
+//feed api
+app.get("/feed", async (req, res) => {
+  try {
+    //passing empty object to find all users
+    const users = await UserModel.find({});
+    res.send(users);
+  } catch (error) {
+    res.status(400).send("error in getting users" + error);
+  }
+});
+
+
+app.get('/user', async (req,res)=>{
+   
+  const singleUser = await UserModel.findOne(req.body.email);
+  res.send(singleUser)
+})
 
 connectDB()
   .then(() => {
