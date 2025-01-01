@@ -30,6 +30,30 @@ app.get("/feed", async (req, res) => {
   }
 });
 
+app.delete("/user", async (req,res)=>{
+  const userId = req.body.userId
+  try {
+    const deleted = await UserModel.findByIdAndDelete(userId)
+    res.send("user deleted")
+  }
+  catch(err){
+    res.status(400).send("error in deleting user" + err)
+  }
+})
+
+app.patch("/user",async(req,res)=>{
+  const userId = req.body.userId
+  const data = req.body
+   
+  try {
+    await UserModel.findByIdAndUpdate({_id:userId},data);
+    res.send("user updated");
+  }
+  catch(err){
+    res.status(400).send("error in updating user" + err)
+  }
+
+})
 
 app.get('/user', async (req,res)=>{
    
@@ -47,3 +71,6 @@ connectDB()
   .catch((err) => {
     console.log("error in connecting database");
   });
+
+
+
