@@ -41,12 +41,26 @@ app.delete("/user", async (req,res)=>{
   }
 })
 
-app.patch("/user",async(req,res)=>{
-  const userId = req.body.userId
+app.patch("/user/:userId",async(req,res)=>{
+  const userId = req.params?.userId
   const data = req.body
+
+  // Remove email field if present
+  if (data.email) {
+    delete data.email;
+  }
+
+  // Validate fields
+  const allowedFields = ["name", "age", "password"]; // Add other allowed fields here
+  const updateData = {};
+  for (const key of Object.keys(data)) {
+    if (allowedFields.includes(key)) {
+      updateData[key] = data[key];
+    }
+  }
    
   try {
-    const user = await UserModel.findByIdAndUpdate({_id:userId},data,{
+    const user = await UserModel.findByIdAndUpdate({_id:userId},updateData,{
       returnDocument: 'after',
       runValidators: true
     });
