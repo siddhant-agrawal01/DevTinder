@@ -46,7 +46,10 @@ app.patch("/user",async(req,res)=>{
   const data = req.body
    
   try {
-    await UserModel.findByIdAndUpdate({_id:userId},data);
+    const user = await UserModel.findByIdAndUpdate({_id:userId},data,{
+      returnDocument: 'after',
+      runValidators: true
+    });
     res.send("user updated");
   }
   catch(err){
